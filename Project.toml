@@ -18,4 +18,4 @@ Manifolds = "1cead3c2-87b3-11e9-0ccd-23c62b72b94e"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "Manopt", "Manifolds"]
+test = ["Test", "Manifolds"]

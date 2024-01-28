@@ -45,7 +45,7 @@ function HagerZhangLinesearch(
     vector_transport_method::VTM=default_vector_transport_method(M),
     delta::T=0.1, # c_1 Wolfe sufficient decrease condition
     sigma::T=0.9, # c_2 Wolfe curvature condition (Recommend 0.1 for GradientDescent)
-    alphamax::T=max_stepsize(M),
+    alphamax::T=float(max_stepsize(M)),
     rho::T=5.0,
     epsilon::T=1e-6,
     gamma::T=0.66,
@@ -85,7 +85,17 @@ function (cs::HagerZhangLinesearch)(
     dphi_0 = real(inner(M, p, X, η))
 
     # guess initial alpha
-    α0 = 1.0
+    local α0 = 1.0
+
+    max_alpha = max_stepsize(M)
+    if isinf(max_alpha)
+        cs.alphamax = max_alpha
+    else
+        # be careful about initial and max alpha on manifolds with finite injectivity radius
+        dir_norm = norm(M, p, η)
+        cs.alphamax = min(max_alpha, max_alpha / dir_norm)
+        α0 = min(1.0, cs.alphamax)
+    end
 
     # perform actual linesearch
 

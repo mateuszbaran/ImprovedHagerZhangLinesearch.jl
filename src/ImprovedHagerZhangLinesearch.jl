@@ -18,7 +18,7 @@ using Manopt: max_stepsize, get_cost_function
 #       on the parameters
 
 mutable struct HagerZhangLinesearch{
-    T,TRM<:AbstractRetractionMethod,VTM<:AbstractVectorTransportMethod,P,TX
+    T<:Real,TRM<:AbstractRetractionMethod,VTM<:AbstractVectorTransportMethod,P,TX
 } <: Linesearch
     delta::T # c_1 Wolfe sufficient decrease condition
     sigma::T # c_2 Wolfe curvature condition (Recommend 0.1 for GradientDescent)
@@ -51,11 +51,11 @@ function HagerZhangLinesearch(
     gamma::T=0.66,
     linesearchmax::Int=50,
     psi3::T=0.1,
-) where {P,TRM<:AbstractRetractionMethod,VTM<:AbstractVectorTransportMethod,T,TX}
+) where {P,TRM<:AbstractRetractionMethod,VTM<:AbstractVectorTransportMethod,T<:Real,TX}
     return HagerZhangLinesearch{T,TRM,VTM,P,TX}(
         delta,
         sigma,
-        alphamax,
+        convert(T, alphamax),
         rho,
         epsilon,
         gamma,
@@ -124,6 +124,7 @@ function (ls::HagerZhangLinesearch)(ϕdϕ, c::T, phi_0::Real, dphi_0::Real) wher
         throw(ErrorException("Value and slope at step length = 0 must be finite."))
     end
     if dphi_0 >= eps(T) * abs(phi_0)
+        println("Values: $dphi_0, $(abs(phi_0))")
         throw(ErrorException("Search direction is not a direction of descent."))
     elseif dphi_0 >= 0
         return zeroT, phi_0

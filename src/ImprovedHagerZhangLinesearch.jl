@@ -458,6 +458,16 @@ function bisect!(
     return ia, ib
 end
 
+function Base.show(io::IO, a::HagerZhangLinesearch)
+    return print(
+        io,
+        """
+        HagerZhangLinesearch with keyword arguments
+          * retraction_method = $(a.retraction_method)
+          * vector_transport_method = $(a.vector_transport_method)""",
+    )
+end
+
 export HagerZhangLinesearch
 
 end # module ImprovedHagerZhangLinesearch
